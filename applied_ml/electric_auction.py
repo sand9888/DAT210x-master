@@ -96,5 +96,5 @@ plt.subplot(414)
 plt.plot(residual, label='Residuals')
 plt.legend(loc='best')
 plt.tight_layout()
-plt.show()
+plt.show(block=False)
 
