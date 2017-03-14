@@ -63,7 +63,7 @@ expwighted_avg = ts_log.ewm(ignore_na=False,min_periods=0,adjust=True,halflife=3
 plt.plot(ts_log)
 plt.title('Weighted moving average')
 plt.plot(expwighted_avg, color='red')
-plt.show()
+plt.show(block=False)
 ts_log_ewma_diff = ts_log - expwighted_avg
 test_stationarity(ts_log_ewma_diff)
 
