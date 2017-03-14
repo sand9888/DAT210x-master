@@ -71,7 +71,7 @@ test_stationarity(ts_log_ewma_diff)
 ts_log_diff = ts_log - ts_log.shift()
 plt.title('Differencing')
 plt.plot(ts_log_diff)
-plt.show()
+plt.show(block=False)
 ts_log_diff.dropna(inplace=True)
 test_stationarity(ts_log_diff)
 
