@@ -43,7 +43,7 @@ def test_stationarity(timeseries):
 	for key, value in dftest[4].items():
 		dfoutput['Critical Value (%s)' % key] = value
 	print(dfoutput)
-
+test_stationarity(ts)
 
 
 
@@ -58,3 +58,43 @@ ts_log_moving_avg_diff = ts_log - moving_avg
 #print(ts_log_moving_avg_diff.head(30))
 ts_log_moving_avg_diff.dropna(inplace=True)
 test_stationarity(ts_log_moving_avg_diff)
+
+expwighted_avg = ts_log.ewm(ignore_na=False,min_periods=0,adjust=True,halflife=30).mean()
+plt.plot(ts_log)
+plt.title('Weighted moving average')
+plt.plot(expwighted_avg, color='red')
+plt.show()
+ts_log_ewma_diff = ts_log - expwighted_avg
+test_stationarity(ts_log_ewma_diff)
+
+#Differencing
+ts_log_diff = ts_log - ts_log.shift()
+plt.title('Differencing')
+plt.plot(ts_log_diff)
+plt.show()
+ts_log_diff.dropna(inplace=True)
+test_stationarity(ts_log_diff)
+
+#Decomposition
+from statsmodels.tsa.seasonal import seasonal_decompose
+decomposition = seasonal_decompose(ts_log)
+
+trend = decomposition.trend
+seasonal = decomposition.seasonal
+residual = decomposition.resid
+
+plt.subplot(411)
+plt.plot(ts_log, label='Original')
+plt.legend(loc='best')
+plt.subplot(412)
+plt.plot(trend, label='Trend')
+plt.legend(loc='best')
+plt.subplot(413)
+plt.plot(seasonal,label='Seasonality')
+plt.legend(loc='best')
+plt.subplot(414)
+plt.plot(residual, label='Residuals')
+plt.legend(loc='best')
+plt.tight_layout()
+plt.show()
+
