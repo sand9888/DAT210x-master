@@ -74,6 +74,7 @@ print(X.dtypes)
 #
 # INFO: An easy way to show which rows have nans in them
 #print(X[pd.isnull(X).any(axis=1)])
+#X = (X[~pd.isnull(X).any(axis=1)])
 
 
 
