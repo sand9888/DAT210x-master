@@ -2,30 +2,35 @@ import pandas as pd
 import numpy as np
 import matplotlib.pylab as plt
 from matplotlib.pylab import rcParams
+from sklearn import preprocessing
 rcParams['figure.figsize'] = 15, 6
 
 
 #dateparse = lambda dates: pd.datetime.strptime(dates, '%dd.%mm.%YYYY')
 data = pd.read_csv('mrl_upwork_model_draft.csv')
+#data['max_price']= data['max_price'].replace(0,'NaN')
 data.dropna(axis=0, inplace=True)
+data = data.loc[(data[['max_price']]!=0).any(axis=1)]
+#data = data[data['max_price']>0]
 data.reset_index(inplace=True)
 data = data.drop(labels = ['index'], axis=1)
 data['Date'] = pd.to_datetime(data['Date'], yearfirst=True, format = '%d.%m.%Y')
-print(data['Date'].dtypes)
 
 data = data.set_index('Date')
-print(data)
 #print(data['2014-02-09'])
-ts = data['offered_volume']
-#plt.plot(ts)
-#plt.show()
+ts = data['max_price']
+#ts = ts[ts > 0]
+plt.title('max_price dictribution')
+plt.plot(ts)
+plt.show()
+#ts = preprocessing.StandardScaler().fit_transform(ts)
 
 from statsmodels.tsa.stattools import adfuller
 
 
 def test_stationarity(timeseries):
 	# Determing rolling statistics
-	rolmean = timeseries.rolling(window=30,center=False).mean()
+	rolmean = timeseries.rolling(center=False,window=30).mean()
 	rolstd = timeseries.rolling(center=False,window=30).std()
 	
 	# Plot rolling statistics:
@@ -43,10 +48,11 @@ def test_stationarity(timeseries):
 	for key, value in dftest[4].items():
 		dfoutput['Critical Value (%s)' % key] = value
 	print(dfoutput)
+	
+	
 test_stationarity(ts)
 
-
-
+'''
 ts_log = np.log(ts)
 moving_avg = ts_log.rolling(center=False,window=30).mean()
 plt.plot(ts_log)
@@ -77,7 +83,7 @@ test_stationarity(ts_log_diff)
 
 #Decomposition
 from statsmodels.tsa.seasonal import seasonal_decompose
-decomposition = seasonal_decompose(ts_log)
+decomposition = seasonal_decompose(ts_log, freq=30)
 
 trend = decomposition.trend
 seasonal = decomposition.seasonal
@@ -96,5 +102,5 @@ plt.subplot(414)
 plt.plot(residual, label='Residuals')
 plt.legend(loc='best')
 plt.tight_layout()
-plt.show(block=False)
+plt.show()'''
 
