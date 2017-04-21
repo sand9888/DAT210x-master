@@ -12,7 +12,7 @@ df2 = pd.read_csv('C:/Users/sand9888/PycharmProjects/DAT210x-master/applied_ml/F
 df = df1.merge(df2, how='left', left_on='CustomerID', right_on='CustomerID')
 df.drop_duplicates(subset='CustomerID', inplace=True)
 #df.dropna(axis=0, inplace=True)
-print(df.dtypes)
+
 
 
 def bar(df):
@@ -23,7 +23,7 @@ def bar(df):
 	
 	## Create a series of bar plots for the various levels of the
 	## string columns in the data frame by readmi_class.
-	names = df.columns.tolist()
+	names = df.Occupation
 	for col in names:
 		if (df[col].dtype not in [np.int64, np.int32, np.float64]):
 			temp1 = df.ix[df.BikeBuyer == 1, col].value_counts()
@@ -37,7 +37,7 @@ def bar(df):
 			ax1.set_title('Values of ' + col + '\n for buyers')
 			temp0.plot(kind='bar', ax=ax0)
 			ax0.set_title('Values of ' + col + '\n for not buyers')
-			fig.savefig('bar_' + col + '.png')
+			
 	plt.show()
 	return 'Done'
 
@@ -78,8 +78,8 @@ def hist(df):
 	names = df.columns.tolist()
 	for col in names:
 		if (df[col].dtype in [np.int64, np.int32, np.float64]):
-			temp1 = df.ix[df.BikeBuyer == 1, col].value_counts()
-			temp0 = df.ix[df.BikeBuyer == 0, col].value_counts()
+			temp1 = df.ix[df.BikeBuyer == 1, col]
+			temp0 = df.ix[df.BikeBuyer == 0, col]
 			
 			fig = plt.figure(figsize=(12, 6))
 			fig.clf()
@@ -89,11 +89,13 @@ def hist(df):
 			ax1.set_title('Histogram of ' + col + '\n for buyers')
 			ax0.hist(temp0.as_matrix(), bins=30)
 			ax0.set_title('Histogram of ' + col + '\n for not buyers')
-			fig.savefig('hist_' + col + '.png')
+			vertical_median_line
 	plt.show()
 	return 'Done'
 
+def vertical_median_line(x, **kwargs):
+    plt.axvline(x.median(), **kwargs)
 
-#hist(df)
+hist(df)
 bar(df)
-#box(df)
+box(df)

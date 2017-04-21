@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 
 
 df1 = pd.read_csv('C:/Users/sand9888/PycharmProjects/DAT210x-master/applied_ml/Final_Project/AWCustomers.csv', header=0)
@@ -15,7 +16,7 @@ df.drop_duplicates(subset='CustomerID', inplace=True)
 df['BithDate'] = pd.to_datetime(df['BirthDate'], yearfirst=True, format='%Y-%m-%d')
 date = df.BirthDate[df['BithDate'] > '1998']
 # print(df.BirthDate.head())
-'''
+
 def cond_hists(df, plot_cols, grid_col):
 	import matplotlib.pyplot as plt
 	## Loop over the list of columns
@@ -27,14 +28,13 @@ def cond_hists(df, plot_cols, grid_col):
 
 
 ## Define columns for making a conditioned histogram
-plot_cols2 = ["BikeBuyer"]
+plot_cols2 = ["AvgMonthSpend"]
+cond_hists(df, plot_cols2, 'CountryRegionName')
 
-cond_hists(df, plot_cols2, 'MaritalStatus')
 
-
-col = 'NumberCarsOwned'
-temp1 = df.ix[df.BikeBuyer == 1, col].value_counts()
-temp0 = df.ix[df.BikeBuyer == 0, col].value_counts()
+col = 'AvgMonthSpend'
+temp1 = df.ix[df.MaritalStatus == 'S', col].value_counts()
+temp0 = df.ix[df.MaritalStatus == 'M', col].value_counts()
 fig = plt.figure(figsize=(12, 6))
 fig.clf()
 ax1 = fig.add_subplot(1, 2, 1)
@@ -43,7 +43,8 @@ ax1.boxplot(temp1.as_matrix())
 ax1.set_title('Box plot of ' + col + '\n for buyers')
 ax0.boxplot(temp0.as_matrix())
 ax0.set_title('Box plot of ' + col + '\n for not buyers')
-'''
+plt.show()
+
 
 
 col = 'AvgMonthSpend'

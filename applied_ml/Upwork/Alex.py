@@ -1,57 +1,117 @@
-import matplotlib.pyplot as plt
+# The script MUST contain a function named azureml_main
+# which is the entry point for this module.
+
+# imports up here can be used to
 import pandas as pd
-import os
-import matplotlib.ticker as plticker
 
-root_dir = os.path.abspath('../Upwork')
-filename_cons = '01e19194-2792-46cb-b94f-17f041210c97_consumption.csv'
-filename_temp = '01e19194-2792-46cb-b94f-17f041210c97_temperature.csv'
-df_cons = pd.read_csv(os.path.join(root_dir, filename_cons))
-df_temp = pd.read_csv(os.path.join(root_dir, filename_temp ))
-df_cons['Date'] = pd.to_datetime(df_cons['Date'], yearfirst=True, format='%Y-%m-%d')
-df_temp['Date'] = pd.to_datetime(df_temp['Date'], yearfirst=True, format='%Y-%m-%d')
 
-id_cons = (str(os.path.splitext(os.path.split(filename_cons)[1])[0])).split('_')[0]
-id_temp = (str(os.path.splitext(os.path.split(filename_temp)[1])[0])).split('_')[0]
+df1 = pd.read_csv('C:/Users/sand9888/PycharmProjects/DAT210x-master/applied_ml/Final_Project/AWCustomers.csv', header=0)
+df2 = pd.read_csv('C:/Users/sand9888/PycharmProjects/DAT210x-master/applied_ml/Final_Project/AWSales.csv', header=0)
 
-col = 'Value'
-fig = plt.figure(figsize=(22, 6))  
-for i in range(15,4,-1):
-	temp1 = df_cons.ix[(df_cons.Date == ('2017-03-'+str(i))) & (df_cons.Hour >= 0) & (df_cons.Hour <= 23)]
-	print(temp1.shape)
-	temp0 = df_temp.ix[(df_temp.Date == ('2017-03-'+str(i))) & (df_temp.Hour >= 0) & (df_temp.Hour <= 23)]
-	
-	
-	
-	ax1 = fig.add_subplot(1, 2, 1)
-	ax0 = fig.add_subplot(1, 2, 2)
-	ax0.set_title('Plot of ' + col + '\n for temperature ' + '\n id=' + id_temp)
-	ax0.set_ylabel('Temperature')
-	ax0.set_xlabel('Hours') 
-	ax1.set_ylabel('Consumption')  
-	ax1.set_xlabel('Hours')
-	
-	ax1.set_title('Plot of ' + col + '\n for consumption ' + '\n id=' + id_cons)
-	loc = plticker.MultipleLocator(base=2.0)
-	ax1.xaxis.set_major_locator(loc)
-	ax0.xaxis.set_major_locator(loc)
-	
-	
-	ax0.plot(temp0.Hour, temp0.Value)
-	ax1.plot(temp1.Hour, temp1.Value)
-	
-plt.show()
-	
-'''col = 'Value'
-temp1 = df_cons.ix[(df_cons.Date == '2017-03-15') & (df_cons.Hour >= 0) & (df_cons.Hour <= 23), col]
-temp0 = df_temp.ix[(df_temp.Date == '2017-03-15') & (df_temp.Hour >= 0) & (df_temp.Hour <= 23), col]
-fig = plt.figure(figsize=(12, 6))
-fig.clf()
-ax1 = fig.add_subplot(1, 2, 1)
-ax0 = fig.add_subplot(1, 2, 2)
-ax1.plot(temp1.as_matrix())
-ax1.set_title('Plot of ' + col + '\n for consumption on 2017-03-15 ' + '\n id=' + id_cons)
-ax0.plot(temp0.as_matrix())
-ax0.set_title('Plot of ' + col + '\n for temperature on 2017-03-15 ' + '\n id=' + id_temp)
-plt.show()   '''
+# print(df1.head(), df2.head(5))
 
+# df = df1.join(df2, on='CustomerID', how='left')
+df = df1.merge(df2, how='left', left_on='CustomerID', right_on='CustomerID')
+def azureml_main(df):
+	df.BirthDate = df.BirthDate.astype('str')
+	df['Age2'] = df['BirthDate'].apply(lambda x: 2017 - int(x[0:4]))
+	# df.ix[df.Age2 > 59, 'Age2'] = df.Age2.median()
+	df.BirthDate = pd.to_datetime(df.BirthDate)
+	df.BirthDate = df.BirthDate.dt.year
+	
+	df.drop(df[df.Age2 > 56].index, axis=0, inplace=True)
+	df.drop(df[df.BirthDate < 1963].index, axis=0, inplace=True)
+	
+	age = []
+	# For each row in the column,
+	for i in df['BirthDate']:
+		# if more than a value,
+		if i > 1986:
+			# Append a letter grade
+			age.append('<30years')
+		# else, if more than a value,
+		elif i <= 1986:
+			# Append a letter grade
+			age.append('>30years')
+	
+	df['Age'] = age
+	
+	manual = []
+	for i in df.Occupation:
+		if i == 'Manual' or i == 'Skilled Manual':
+			manual.append(1)
+		elif i != 'Manual' and i != 'Skilled Manual':
+			manual.append(0)
+	df['Manual'] = manual
+	
+	professional = []
+	for i in df.Occupation:
+		if i == 'Professional' or i == 'Management':
+			professional.append(1)
+		elif i != 'Professional' and i != 'Management':
+			professional.append(0)
+	df['Professional'] = professional
+	
+	rich_man = []
+	for a, b, c in zip(df.Gender, df.Age, df.YearlyIncome):
+		if a == 'M' and b == '>30years' and c > 90000:
+			rich_man.append(1)
+		else:
+			rich_man.append(0)
+	print(rich_man)
+	df['Richman'] = rich_man
+	
+	car_owner = []
+	for i in df.NumberCarsOwned:
+		if i == 0:
+			car_owner.append(0)
+		else:
+			car_owner.append(1)
+	df['CarOwner'] = car_owner
+	
+	children_at_home = []
+	for i in df.NumberChildrenAtHome:
+		if i == 0:
+			children_at_home.append(0)
+		else:
+			children_at_home.append(1)
+	df['ChildrenHome'] = children_at_home
+	
+	mid_age_cr = []
+	for i, ii in zip(df['BirthDate'], df['Gender']):
+		# if more than a value,
+		if i >= 1967 and i <= 1986 and ii == 'M':
+			# Append a letter grade
+			mid_age_cr.append(1)
+		# else, if more than a value,
+		else:
+			# Append a letter grade
+			mid_age_cr.append(0)
+	df['MidAgeCr'] = mid_age_cr
+	
+	income = []
+	# For each row in the column,
+	for i in df['YearlyIncome']:
+		# if more than a value,
+		if i <= 35000:
+			# Append a letter grade
+			income.append('<35k')
+		# else, if more than a value,
+		elif i > 35000 and i <= 60000:
+			# Append a letter grade
+			income.append('30-60k')
+		elif i > 60000 and i <= 90000:
+			# Append a letter grade
+			income.append('60-90k')
+		elif i > 90000:
+			# Append a letter grade
+			income.append('>90k')
+	
+	df['Income'] = income
+	
+	# df.ix[df.NumberCarsOwned > 3, 'NumberCarsOwned'] = df.NumberCarsOwned.median()
+	# df.ix[df.BirthDate < 1951, 'BirthDate'] = df.BirthDate.median()
+	
+	return df
+
+azureml_main(df)
