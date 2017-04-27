@@ -30,10 +30,11 @@ print(len(df[(df.motor == 'E') & (df.screw == 'E')]))
 # you've found it, print it:
 df2 = df[df.pgain == 4]
 print(df2.describe())
+print(df2.pgain.mean())
 
 
 # TODO: (Bonus) See what happens when you run
 # the .dtypes method on your dataframe!
 
-
+print(df2.dtypes)
 

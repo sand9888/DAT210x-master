@@ -8,10 +8,13 @@ import numpy as np
 df = pd.read_csv('C:/DAT210x-master/Module2/Datasets/census.data', na_values=['?'])
 classic =['<=50K', '>50K']
 
+
+
 df.columns = ['0', 'education', 'age', 'capital-gain', 'race', 'capital-loss', 'hours-per-week', 'sex', 'classification']
+print(df.classification.head(10))
 df = df.drop(labels='0', axis=1)
 df['classification']=df['classification'].astype('category', ordered=True, categories=classic).cat.codes
-print(df.head(20))
+print(df.head(10))
 
 
 
