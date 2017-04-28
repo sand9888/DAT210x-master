@@ -17,9 +17,6 @@ def best_rectangle(date, amplitude_threshold=0):
 	ax1 = fig1.add_subplot(111)
 	plt.xlim([0, 24])
 	plt.ylim([0, dataframe['Amplitude'].max() + 300])
-	value_list = []
-	value_list_final = []
-	control_number = df.ix[0, 'Value']
 	for i, (starttime, duration, amplitude, hour, nth_hour, value) in enumerate(zip(dataframe['Start Time'], dataframe['Duration'], dataframe['Amplitude'],
 													dataframe['Hour'], dataframe['nth Hour'], dataframe['Value'])):
 		
@@ -43,8 +40,6 @@ def best_rectangle(date, amplitude_threshold=0):
 					i - 1, 'Amplitude']:
 			value_list.append(df.ix[i, 'Value'])
 			plt.text(hour - nth_hour, amplitude + 100, max(value_list), fontdict=None, withdash=False)
-	
-		#plt.text(hour-nth_hour, amplitude+100, max(value_list), fontdict=None, withdash=False)
 	plt.show()
 
 best_rectangle('2015-01-01')
