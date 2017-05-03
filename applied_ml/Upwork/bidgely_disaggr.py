@@ -10,8 +10,10 @@ df = pd.read_csv(os.path.join(root_dir, filename))
 # remain data where AppId equals 0
 df = df[df.AppId == 0]
 
-df.sort_values(by=['NhoodId'], ascending=True, inplace=True)
+# creating empty dataframe
 df_final = pd.DataFrame()
+
+# dividing data by percentiles
 for i in list(df.NhoodId.unique()):
 	df_id = df[df.NhoodId == int(i)]
 	
