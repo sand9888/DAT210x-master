@@ -10,7 +10,7 @@ df = pd.read_csv(os.path.join(root_dir, filename))
 # remain data where AppId equals 0
 df = df[df.AppId == 0]
 
-# creating empty dataframe
+#creating empty dataframe
 df_final = pd.DataFrame()
 
 # dividing data by percentiles
@@ -32,6 +32,7 @@ for i in list(df.NhoodId.unique()):
 	df_5quant = df_id[df_id.Consumption > np.percentile(df.Consumption,80)]
 	df_5quant.loc[:,'quantileId'] = 5
 
+# merging datasets into one
 	df_new = pd.concat([df_1quant, df_2quant, df_3quant, df_4quant, df_5quant])
 	df_final = df_final.append(df_new)
 
