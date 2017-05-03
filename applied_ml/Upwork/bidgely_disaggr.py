@@ -40,3 +40,5 @@ for i in list(df.NhoodId.unique()):
 for i in range(1,6):
 	quant = df_final[df_final.quantileId == i]
 	print('Quantile ', i, ': \n', 'Average Consumption:', quant['Consumption'].mean(), '\n', 'Median Consumption: ', quant['Consumption'].median())
+df_final['Consumption_mean_percent'] = df_final['Consumption']/df_final['Consumption'].mean()
+df_final['Consumption_median_percent'] = df_final['Consumption']/df_final['Consumption'].median()
