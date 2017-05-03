@@ -36,4 +36,4 @@ for i in list(df.NhoodId.unique()):
 # computing descriptive statistic
 for i in range(1,6):
 	quant = df_final[df_final.quantileId == i]
-	print('Quantile ', i, ': \n', 'Average:', quant['Consumption'].mean(), '\n', 'Median: ', quant['Consumption'].median())
+	print('Quantile ', i, ': \n', 'Average Consumption:', quant['Consumption'].mean(), '\n', 'Median Consumption: ', quant['Consumption'].median())
