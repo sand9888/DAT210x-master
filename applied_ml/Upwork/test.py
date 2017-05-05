@@ -36,7 +36,9 @@ def quantile_number(quant_num = 5):
 				df_final = df_final.append(df_q)
 	
 	for i, (date_month, quant, uuid) in enumerate(zip(df_final['Month'], df_final['quantileId'], df_final['UUID'])):
-		df_non_raw.quantileId[(df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid)] = df_final.ix[i, 'quantileId']
+		df_non_raw['quantileId'] = df_final['quantileId'].where((df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid), 0)
+		# df_non_raw.quantileId = df_non_raw[(df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid)]
+		# df_non_raw.quantileId[(df_non_raw['Month'] == date_month)] == df_final.ix[i, 'quantileId']
 		
 	print(df_non_raw)
 	'''	df_n
