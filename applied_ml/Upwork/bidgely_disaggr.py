@@ -47,6 +47,5 @@ def quantile_number(quant_num=5):
 	df_final['Consumption_median_percent'] = df_final['Consumption'] / df_non_raw['Consumption'].median()
 	return df_final
 
-
 df_final = quantile_number()
 
