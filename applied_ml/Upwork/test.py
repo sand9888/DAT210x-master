@@ -12,7 +12,9 @@ df_scource['Month'] = df_scource['Month'].apply(lambda x: str(x)[:7])
 
 # remain data where AppId equals 0
 df = df_scource[df_scource['AppId'] == 0].reset_index()
+# creating 'non-raw dataset'
 df_non_raw = df_scource[df_scource.AppId != 0].reset_index()
+#creating quantileId column in it
 df_non_raw['quantileId'] = np.nan
 
 # dividing data by percentiles as function parameter
@@ -36,23 +38,9 @@ def quantile_number(quant_num = 5):
 				df_final = df_final.append(df_q)
 	
 	for date_month, quant, uuid in zip(df_final['Month'], df_final['quantileId'], df_final['UUID']):
-		# df.loc[df['First Season'] > 1990, 'First Season'] = 1
-		df_non_raw.loc[df_non_raw['Month'] == date_month, 'quantileId'] = 1
-		# print(i, date_month, quant, uuid)
-		# df_non_raw['quantileId'] = df_final['quantileId'].where((df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid), 0)
-		# df_non_raw.quantileId = df_non_raw[(df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid)]
-		# df_non_raw.quantileId[(df_non_raw['Month'] == date_month)] == df_final.ix[i, 'quantileId']
+		df_non_raw.loc[(df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid), 'quantileId'] = quant
 		
-	# print(df_non_raw)
-	'''	df_n
-		for j, quant_id in enumerate(df_non_raw['quantileId']):
-			print(i, date_month, j, quant_id)
-			if (df_final.ix[i, 'Month'] == df_non_raw.ix[j, 'Month']) and (df_final.ix[i, 'UUID'] == df_non_raw.ix[j, 'UUID']):
-				df_non_raw.ix[j, 'quantileId'] = df_final.ix[i, 'quantileId']'''
-				
-		
-		
-
+	# computing decriptive statistic
 	for i in range(1, quant_num+1):
 		quant = df_final[df_final.quantileId == i]
 		print('Quantile ', i, ': \n', 'Average Consumption:', quant['Consumption'].mean(), '\n', 'Median Consumption: ',
@@ -60,8 +48,8 @@ def quantile_number(quant_num = 5):
 	df_final['Consumption_mean_percent'] = df_final['Consumption'] / df_non_raw['Consumption'].mean()
 	df_final['Consumption_median_percent'] = df_final['Consumption'] / df_non_raw['Consumption'].median()
 	print(df_non_raw)
-	return df_final
+	return df_final, df_non_raw
 
 df_final = quantile_number()
 
-# computing descriptive statistic
+
