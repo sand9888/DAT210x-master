@@ -19,6 +19,7 @@ data['Date'] = pd.to_datetime(data['Date'], yearfirst=True, format = '%d.%m.%Y')
 data = data.set_index('Date')
 #print(data['2014-02-09'])
 ts = data['max_price']
+print(ts)
 #ts = ts[ts > 0]
 plt.title('max_price dictribution')
 plt.plot(ts)
