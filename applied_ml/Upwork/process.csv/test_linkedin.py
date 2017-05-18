@@ -18,11 +18,7 @@ df = df.set_index('Timeseries')
 plt.plot(df)
 plt.show()
 
-#
-from statsmodels.tsa.stattools import adfuller
-
-
-def test_stationarity(timeseries):
+def stationarity(timeseries):
 	# Determing rolling statistics
 	rolmean = df.rolling(window=12,center=False).mean()
 	rolstd = df.rolling(window=12,center=False).std()
@@ -35,7 +31,7 @@ def test_stationarity(timeseries):
 	plt.title('Rolling Mean & Standard Deviation')
 	plt.show()
 
-test_stationarity(df)
+stationarity(df)
 
 #calculating moving average
 moving_avg = df.rolling(center=False,window=12).mean()
@@ -49,14 +45,14 @@ print(moving_avg_diff.head(12))
 
 #
 moving_avg_diff.dropna(inplace=True)
-test_stationarity(moving_avg_diff)
+stationarity(moving_avg_diff)
 
 # differencing
 df_diff = df - df.shift()
 plt.plot(df_diff)
 plt.show()
 df_diff.dropna(inplace=True)
-test_stationarity(df_diff)
+stationarity(df_diff)
 
 # decomposing
 from statsmodels.tsa.seasonal import seasonal_decompose
