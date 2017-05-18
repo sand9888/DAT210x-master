@@ -24,6 +24,15 @@ def quantile_number(quant_number=5):
     for date_month, quant, uuid in zip(df_final['Month'], df_final['QuantileId'], df_final['UUID']):
         df_non_raw.loc[(df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid),'QuantileId'] = quant
 
+    quant_index = list(df_non_raw['QuantileId'].unique())
+    for q_ind in quant_index:
+        mean = df_non_raw.loc['QuantileId' == q_ind, 'Consumption'].mean()
+        median = df_non_raw.loc['QuantileId' == q_ind, 'Consumption'].median()
+        for date_month2, quant2, appid2 in zip(df_final['Month'], df_final['QuantileId'], df_final['AppId']):
+            df_non_raw['Average'] = df_non_raw[(df_non_raw['Month'] == date_month2) & (df_non_raw['AppId'] == appid2) & (df_non_raw['QuantileId'] == q_ind)]['Consumption']/mean
+            df_non_raw['Median'] = df_non_raw[(df_non_raw['Month'] == date_month2) & (df_non_raw['AppId'] == appid2) & (df_non_raw['QuantileId'] == q_ind)]['Consumption']/median
+
+
     return df_final, df_non_raw
 
 df_final = quantile_number()
