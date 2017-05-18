@@ -11,6 +11,7 @@ df_scource.Month = pd.to_datetime(df_scource.Month,  yearfirst=True, format='%m/
 #leaving only month and year in 'Month' column
 df_scource['Month'] = df_scource['Month'].apply(lambda x: str(x)[:7])
 
+
 # remain data where AppId equals 0
 df = df_scource[df_scource['AppId'] == 0].reset_index()
 # creating 'non-raw dataset'
@@ -41,7 +42,7 @@ def quantile_number(quant_num = 5):
 	#assign quartile number in 'non-raw' dataset where month, year and UUID equal month, year and UUID in 'raw' dataset
 	for date_month, quant, uuid in zip(df_final['Month'], df_final['quantileId'], df_final['UUID']):
 		df_non_raw.loc[(df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid), 'quantileId'] = quant
-		
+	print(df_non_raw.head(10))
 	# computing decriptive statistic
 	for i in range(1, quant_num+1):
 		quant = df_final[df_final.quantileId == i]
@@ -55,5 +56,6 @@ def quantile_number(quant_num = 5):
 
 #calling function with default #quartiles == 5
 df_final = quantile_number()
+print(df_non_raw)
 
 

@@ -23,6 +23,7 @@ def quantile_number(quant_number=5):
 
     for date_month, quant, uuid in zip(df_final['Month'], df_final['QuantileId'], df_final['UUID']):
         df_non_raw.loc[(df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid),'QuantileId'] = quant
+
     return df_final, df_non_raw
 
 df_final = quantile_number()
