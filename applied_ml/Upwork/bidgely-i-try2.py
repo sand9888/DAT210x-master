@@ -24,7 +24,12 @@ def quantile_number(quant_number=5):
         for date_month, quant, uuid in zip(df_final['Month'], df_final['QuantileId'], df_final['UUID']):
             df_non_raw.loc[(df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid), 'QuantileId'] = quant
         # print(df_non_raw.head(10))
-        '''quant_index = list(df_non_raw['QuantileId'].unique())
+    df_final['Average'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('mean')
+    df_final['Median'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('median')
+    # df_final['Average'] = df_final['Consumption'].groupby(df_final['NhoodId', 'Month', 'QuantileId', 'AppId']).transform('mean')
+    # df_final['Median'] = df_final['Consumption'].groupby(df_final['NhoodId', 'Month', 'QuantileId', 'AppId']).transform('median')
+    print(df_final.head(10))
+    '''quant_index = list(df_non_raw['QuantileId'].unique())
         for q_ind in quant_index:
             mean = df_non_raw.loc['QuantileId' == q_ind, 'Consumption'].mean()
             median = df_non_raw.loc['QuantileId' == q_ind, 'Consumption'].median()
@@ -37,4 +42,4 @@ def quantile_number(quant_number=5):
     return df_final, df_non_raw
 
 df_final = quantile_number()
-print(df_non_raw)
+# print(df_non_raw)
