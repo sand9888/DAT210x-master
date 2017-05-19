@@ -22,7 +22,9 @@ def quantile_number(quant_number=5):
             df_final = df_final.append(df_nhoodid)
     
     print(df_final)
-    df_final['QuantileId'] = df_non_raw.groupby(['Month', 'UUID'])
+    df_final['Average'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('mean')
+    df_final['Median'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('median')
+    # df_final['QuantileId'] = df_non_raw.groupby(['Month', 'UUID'])
     '''for date_month, quant, uuid in zip(df_final['Month'], df_final['QuantileId'], df_final['UUID']):
         df_non_raw.loc[(df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid),'QuantileId'] = quant
 

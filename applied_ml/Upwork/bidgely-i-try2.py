@@ -24,22 +24,24 @@ def quantile_number(quant_number=5):
         for date_month, quant, uuid in zip(df_final['Month'], df_final['QuantileId'], df_final['UUID']):
             df_non_raw.loc[(df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid), 'QuantileId'] = quant
         # print(df_non_raw.head(10))
+        
+    # calculating Average, Median
     df_final['Average'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('mean')
     df_final['Median'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('median')
-    # df_final['Average'] = df_final['Consumption'].groupby(df_final['NhoodId', 'Month', 'QuantileId', 'AppId']).transform('mean')
-    # df_final['Median'] = df_final['Consumption'].groupby(df_final['NhoodId', 'Month', 'QuantileId', 'AppId']).transform('median')
-    print(df_final.head(10))
-    '''quant_index = list(df_non_raw['QuantileId'].unique())
-        for q_ind in quant_index:
-            mean = df_non_raw.loc['QuantileId' == q_ind, 'Consumption'].mean()
-            median = df_non_raw.loc['QuantileId' == q_ind, 'Consumption'].median()
-            for date_month2, quant2, appid2 in zip(df_final['Month'], df_final['QuantileId'], df_final['AppId']):
-                df_non_raw['Average'] = df_non_raw[(df_non_raw['Month'] == date_month2) & (df_non_raw['AppId'] == appid2) & (df_non_raw['QuantileId'] == q_ind)]['Consumption']/mean
-                df_non_raw['Median'] = df_non_raw[(df_non_raw['Month'] == date_month2) & (df_non_raw['AppId'] == appid2) & (df_non_raw['QuantileId'] == q_ind)]['Consumption']/median'''
+    
+    # calculating Average%, Median%
+    list_quant = list(df_non_raw['QuantileId'].unique())
+    # list_quant.remove('nan')
+    list_quant = [x for x in list_quant if str(x) != 'nan']
+    for ii in list_quant:
+        df_final['Average%'] = df_final['Average']/df_non_raw.loc[(df_non_raw['QuantileId'] == ii) & (df_final['QuantileId'] == ii), 'Consumption'].mean()
+        df_final['Median%'] = df_final['Average'] / df_non_raw.loc[(df_non_raw['QuantileId'] == ii) & (df_final['QuantileId'] == ii), 'Consumption'].median()
+    df_final['Average-error'] = df_final['Average'] - df_final['Consumption']
+    df_final['Average-error%'] = (df_final['Average'] - df_final['Consumption'])/df_final['Consumption']
+	
 
-            
-            
+    print(df_final.head(10))
+    
     return df_final, df_non_raw
 
 df_final = quantile_number()
-# print(df_non_raw)
