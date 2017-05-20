@@ -20,17 +20,16 @@ def quantile_number(quant_number=5):
             df_nhoodid =  df_nhoodid[df_nhoodid.Month == dat]
             df_nhoodid['QuantileId'] = pd.qcut(df_nhoodid['Consumption'], quant_number, labels = [i for i in range(1, quant_number+1)])
             df_final = df_final.append(df_nhoodid)
-
-    for date_month, quant, uuid in zip(df_final['Month'], df_final['QuantileId'], df_final['UUID']):
+    
+    print(df_final)
+    df_final['Average'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('mean')
+    df_final['Median'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('median')
+    # df_final['QuantileId'] = df_non_raw.groupby(['Month', 'UUID'])
+    '''for date_month, quant, uuid in zip(df_final['Month'], df_final['QuantileId'], df_final['UUID']):
         df_non_raw.loc[(df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid),'QuantileId'] = quant
 
-<<<<<<< HEAD
-    print(df_non_raw.QuantileId.isnull().sum())
-    '''quant_index = list(df_non_raw['QuantileId'].unique())
-=======
     quant_index = list(df_non_raw['QuantileId'].unique())
     print(quant_index)
->>>>>>> a255e1188c96099902082c170da673df86b9e833
     for q_ind in quant_index:
         df_mean = df_non_raw._ix['QuantileId' == q_ind, 'Consumption']
         print(df_mean.mean())
@@ -43,4 +42,3 @@ def quantile_number(quant_number=5):
     return df_final, df_non_raw
 
 df_final = quantile_number()
-print(df_non_raw.QuantileId.isnull().sum())

@@ -38,11 +38,15 @@ def quantile_number(quant_num = 5):
 				df_q = df_id[(df_id.Consumption > np.percentile(df.Consumption, int(quant_val)*(i-1))) & (df_id.Consumption <= np.percentile(df.Consumption, quant_val*i))]
 				df_q.loc[:, 'quantileId'] = i
 				df_final = df_final.append(df_q)
+	print(df_final.shape)
+	df_final.groupby('quantileId').mean()
+	print(df_final.groupby('quantileId')['AppId'].count())
 				
 	#assign quartile number in 'non-raw' dataset where month, year and UUID equal month, year and UUID in 'raw' dataset
-	for date_month, quant, uuid in zip(df_final['Month'], df_final['quantileId'], df_final['UUID']):
+	'''for date_month, quant, uuid in zip(df_final['Month'], df_final['quantileId'], df_final['UUID']):
 		df_non_raw.loc[(df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid), 'quantileId'] = quant
-	print(df_non_raw.head(10))
+	quant_index = list(df_non_raw['quantileId'].unique())
+	print(quant_index)
 	# computing decriptive statistic
 	for i in range(1, quant_num+1):
 		quant = df_final[df_final.quantileId == i]
@@ -52,10 +56,10 @@ def quantile_number(quant_num = 5):
 	df_final['Consumption_median_percent'] = df_final['Consumption'] / df_non_raw['Consumption'].median()
 	
 	#returning 'raw' and 'non-raw' datasets
-	return df_final, df_non_raw
+	return df_final, df_non_raw'''
 
 #calling function with default #quartiles == 5
 df_final = quantile_number()
-print(df_non_raw)
+
 
 
