@@ -44,8 +44,7 @@ def quantile_number(quant_number=5):
     
     # calculating Average, Median
     df_final['Average'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('mean')
-    df_final['Median'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform(
-        'median')
+    df_final['Median'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('median')
 
     # calculating Average%, Median%
     list_quant = list(df_non_raw2['QuantileId'].unique())
