@@ -13,7 +13,6 @@ df_disagg['Month'] = df_disagg['Month'].apply(lambda x: str(x)[:7])
 df_raw = df_disagg[df_disagg.AppId == 0].reset_index()
 df_non_raw = df_disagg[df_disagg.AppId != 0].reset_index()
 
-
 def quantile_number(quant_number=5, min_est_level=10000):
     df_final = pd.DataFrame()
     for i in list(df_raw.NhoodId.unique()):
@@ -24,38 +23,21 @@ def quantile_number(quant_number=5, min_est_level=10000):
                                                labels=[i for i in range(1, quant_number + 1)])
             df_final = df_final.append(df_nhoodid)
     
-    # df_final['Raw'] =  df_final['Consumption']
-    
     # replacing for-loop with join:
     df_final2 = df_final[['UUID', 'Month', 'QuantileId']]
     df_non_raw3 = pd.DataFrame()
     for id in list(df_final['QuantileId'].unique()):
-        # variant1
-        # df1 = df_final[(df_final['QuantileId'] == id)].join(df_non_raw[(df_non_raw['Month'] == df_final['Month']) & (df_non_raw['UUID'] == df_final['UUID'])])
-        # variant2
-        # result = pd.merge(df_final[(df_final['QuantileId'] == id)], df_non_raw[(df_non_raw['Month'] == df_final['Month']) & (df_non_raw['UUID'] == df_final['UUID'])], on='UUID')
-        # variant3
         df_final2 = df_final[['UUID', 'Month', 'QuantileId']]
-        df_non_raw2 = pd.merge(df_final2[(df_final2['QuantileId'] == id)], df_non_raw, on=['UUID', 'Month'],
-                               how='inner')
+        df_non_raw2 = pd.merge(df_final2[(df_final2['QuantileId'] == id)], df_non_raw, on=['UUID', 'Month'],how='inner')
         df_non_raw2['QuantileId'] = id
-        
         df_non_raw3 = df_non_raw3.append(df_non_raw2, ignore_index=True)
         
-        # variant4
-        # df_non_raw['QuantileId'] = df_final['QuantileId'].applymap(lambda x: x['QuantileId'] if x['Month'] == df_non_raw['Month'] & x['UUID'] == df_non_raw['UUID'] else 'Nan', axis=0)
-    
     df_non_raw3 = df_non_raw3[['index', 'NhoodId', 'UUID', 'AppId', 'Month', 'Consumption', 'QuantileId']]
     df_final = df_final.append(df_non_raw3, ignore_index=True)
-
-    # for date_month, quant, uuid in zip(df_final['Month'], df_final['QuantileId'], df_final['UUID']):
-    #	df_non_raw.loc[(df_non_raw['Month'] == date_month) & (df_non_raw['UUID'] == uuid), 'QuantileId'] = quant
-    # print(df_non_raw.head(10))
     
     # calculating Average, Median
     df_final['Average'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('mean')
-    df_final['Median'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform(
-        'median')
+    df_final['Median'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('median')
     
     # calculating Average%, Median%
     list_quant = list(df_non_raw3['QuantileId'].unique())
@@ -184,8 +166,5 @@ def quantile_number(quant_number=5, min_est_level=10000):
     df_sum_uuid['Recall'] = df_sum_uuid['TP'] / (df_sum_uuid['TP'] + df_sum_uuid['FN'])
 
     print(df_sum_uuid)'''
-    
     return df_final, df_non_raw
-
-
 df_final = quantile_number()
