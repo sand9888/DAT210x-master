@@ -23,7 +23,8 @@ def quantile_number(quant_number=5, min_est_level = 10000):
             df_nhoodid['QuantileId'] = pd.qcut(df_nhoodid['Consumption'], quant_number, labels=[i for i in range(1, quant_number + 1)])
             df_final = df_final.append(df_nhoodid)
 
-    df_final['Raw'] =  df_final['Consumption']
+    #df_final['Raw'] =  df_final['Consumption']
+
     # replacing for-loop with join:
     df_final2 = df_final[['UUID', 'Month', 'QuantileId']]
     df_non_raw3 = pd.DataFrame()
@@ -42,6 +43,8 @@ def quantile_number(quant_number=5, min_est_level = 10000):
         
         # variant4
         #df_non_raw['QuantileId'] = df_final['QuantileId'].applymap(lambda x: x['QuantileId'] if x['Month'] == df_non_raw['Month'] & x['UUID'] == df_non_raw['UUID'] else 'Nan', axis=0)
+
+
 
     df_non_raw3 = df_non_raw3[['index', 'NhoodId', 'UUID', 'AppId', 'Month', 'Consumption', 'QuantileId']]
     df_final = df_final.append(df_non_raw3, ignore_index=True)
