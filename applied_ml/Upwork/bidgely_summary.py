@@ -85,26 +85,51 @@ def quantile_number(quant_number=5, min_est_level=10000):
     list_month = list(df_final['Month'].unique())
     df_sum_month['Month'] = list_month
     
-    list_tp = []
-    list_tn = []
-    list_fp = []
-    list_fn = []
+    df_final_heating = df_final[df_final['AppId'] == 3]
+    df_final_cooling = df_final[df_final['AppId'] == 4]
+    
+    # heating
+    list_tp_heating = []
+    list_tn_heating = []
+    list_fp_heating = []
+    list_fn_heating = []
+    # cooling
+    list_tp_cooling = []
+    list_tn_cooling = []
+    list_fp_cooling = []
+    list_fn_cooling = []
+    
     for iii in list_month:
-        list_tp.append(df_final.loc[(df_final.Month == iii) & (df_final.Detection == 'TP'), 'Detection'].count())
-        list_tn.append(df_final.loc[(df_final.Month == iii) & (df_final.Detection == 'TN'), 'Detection'].count())
-        list_fp.append(df_final.loc[(df_final.Month == iii) & (df_final.Detection == 'FP'), 'Detection'].count())
-        list_fn.append(df_final.loc[(df_final.Month == iii) & (df_final.Detection == 'FN'), 'Detection'].count())
-    df_sum_month['TP'] = list_tp
-    df_sum_month['TN'] = list_tn
-    df_sum_month['FP'] = list_fp
-    df_sum_month['FN'] = list_fn
-    df_sum_month['Precision'] = df_sum_month['TP'] / (df_sum_month['TP'] + df_sum_month['FP'])
-    df_sum_month['Recall'] = df_sum_month['TP'] / (df_sum_month['TP'] + df_sum_month['FN'])
+        # heating
+        list_tp_heating.append(df_final_heating.loc[(df_final_heating.Month == iii) & (df_final_heating.Detection == 'TP'), 'Detection'].count())
+        list_tn_heating.append(df_final_heating.loc[(df_final_heating.Month == iii) & (df_final_heating.Detection == 'TN'), 'Detection'].count())
+        list_fp_heating.append(df_final_heating.loc[(df_final_heating.Month == iii) & (df_final_heating.Detection == 'FP'), 'Detection'].count())
+        list_fn_heating.append(df_final_heating.loc[(df_final_heating.Month == iii) & (df_final_heating.Detection == 'FN'), 'Detection'].count())
+        # cooling
+        list_tp_cooling.append(df_final_cooling.loc[(df_final_cooling.Month == iii) & (df_final_cooling.Detection == 'TP'), 'Detection'].count())
+        list_tn_cooling.append(df_final_cooling.loc[(df_final_cooling.Month == iii) & (df_final_cooling.Detection == 'TN'), 'Detection'].count())
+        list_fp_cooling.append(df_final_cooling.loc[(df_final_cooling.Month == iii) & (df_final_cooling.Detection == 'FP'), 'Detection'].count())
+        list_fn_cooling.append(df_final_cooling.loc[(df_final_cooling.Month == iii) & (df_final_cooling.Detection == 'FN'), 'Detection'].count())
+       
+    # heating confusion matrix
+    df_sum_month['TP_heating'] = list_tp_heating
+    df_sum_month['TN_heating'] = list_tn_heating
+    df_sum_month['FP_heating'] = list_fp_heating
+    df_sum_month['FN_heating'] = list_fn_heating
+    df_sum_month['Precision_heating'] = df_sum_month['TP_heating'] / (df_sum_month['TP_heating'] + df_sum_month['FP_heating'])
+    df_sum_month['Recall_heating'] = df_sum_month['TP_heating'] / (df_sum_month['TP_heating'] + df_sum_month['FN_heating'])
+    
+    # cooling confusion matrix
+    df_sum_month['TP_cooling'] = list_tp_cooling
+    df_sum_month['TN_cooling'] = list_tn_cooling
+    df_sum_month['FP_cooling'] = list_fp_cooling
+    df_sum_month['FN_cooling'] = list_fn_cooling
+    df_sum_month['Precision_cooling'] = df_sum_month['TP_cooling'] / (df_sum_month['TP_cooling'] + df_sum_month['FP_cooling'])
+    df_sum_month['Recall_cooling'] = df_sum_month['TP_cooling'] / (df_sum_month['TP_cooling'] + df_sum_month['FN_cooling'])
     
     # estimation heating
     df_sum_month['Estimation'] = df_sum_month['Month']
-    df_final_heating = df_final[df_final['AppId'] == 3]
-    df_final_cooling = df_final[df_final['AppId'] == 4]
+
     # print(df_final)
     list_med_heating = []
     list_mean_heating = []
