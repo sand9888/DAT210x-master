@@ -41,6 +41,7 @@ def quantile_number(quant_number=5, min_est_level = 10000):
 
     df_non_raw3 = df_non_raw3[['index', 'NhoodId', 'UUID', 'AppId', 'Month', 'Consumption', 'QuantileId']]
     df_final = df_final.append(df_non_raw3, ignore_index=True)
+    print(df_final)
         # variant4
         #df_non_raw['QuantileId'] = df_final['QuantileId'].applymap(lambda x: x['QuantileId'] if x['Month'] == df_non_raw['Month'] & x['UUID'] == df_non_raw['UUID'] else 'Nan', axis=0)
     
@@ -53,23 +54,18 @@ def quantile_number(quant_number=5, min_est_level = 10000):
     df_final['Median'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform(
         'median')
 
-    list_uuid = list(df_final['UUID'].unique())
-    for i in list_uuid:
-        a = df_final[df_final['UUID'] == i and df_final['AppId'] == 0]['Consumption']
-        df_final[df_final['UUID']==i]['Raw'] = a
-
     # calculating Average%, Median%
     list_quant = list(df_non_raw3['QuantileId'].unique())
     # list_quant.remove('nan')
     list_quant = [x for x in list_quant if str(x) != 'nan']
     for ii in list_quant:
-        df_final['Average%'] = df_final['Average'] / df_non_raw3.loc[
-            (df_non_raw3['QuantileId'] == ii) & (df_final['QuantileId'] == ii), 'Consumption'].mean()
-        df_final['Median%'] = df_final['Average'] / df_non_raw3.loc[
-            (df_non_raw3['QuantileId'] == ii) & (df_final['QuantileId'] == ii), 'Consumption'].median()
+        df_final['Average%'] = df_final['Average'] / df_final.loc[
+            df_final['QuantileId'] == ii, 'Consumption'].mean()
+        df_final['Median%'] = df_final['Average'] / df_final.loc[
+            df_final['QuantileId'] == ii, 'Consumption'].median()
     df_final['Average-error'] = df_final['Average'] - df_final['Consumption']
     df_final['Average-error%'] = (df_final['Average'] - df_final['Consumption']) / df_final['Consumption']
-
+    print(df_final)
 
     #df_final['Average'].hist(by=df_final['AppId'])
     #df_final['Average'].hist(by=df_final['Month'])

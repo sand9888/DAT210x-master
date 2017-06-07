@@ -22,7 +22,8 @@ def quantile_number(quant_number=5, min_est_level = 10000):
             df_nhoodid = df_nhoodid[df_nhoodid.Month == dat]
             df_nhoodid['QuantileId'] = pd.qcut(df_nhoodid['Consumption'], quant_number, labels=[i for i in range(1, quant_number + 1)])
             df_final = df_final.append(df_nhoodid)
-    
+
+    df_final['Raw'] =  df_final['Consumption']
     # replacing for-loop with join:
     df_final2 = df_final[['UUID', 'Month', 'QuantileId']]
     df_non_raw3 = pd.DataFrame()
@@ -59,10 +60,10 @@ def quantile_number(quant_number=5, min_est_level = 10000):
     # list_quant.remove('nan')
     list_quant = [x for x in list_quant if str(x) != 'nan']
     for ii in list_quant:
-        df_final['Average%'] = df_final['Average'] / df_non_raw3.loc[
-            (df_non_raw3['QuantileId'] == ii) & (df_final['QuantileId'] == ii), 'Consumption'].mean()
-        df_final['Median%'] = df_final['Average'] / df_non_raw3.loc[
-            (df_non_raw3['QuantileId'] == ii) & (df_final['QuantileId'] == ii), 'Consumption'].median()
+        df_final['Average%'] = df_final['Average'] / df_final.loc[
+            df_final['QuantileId'] == ii, 'Consumption'].mean()
+        df_final['Median%'] = df_final['Average'] / df_final.loc[
+            df_final['QuantileId'] == ii, 'Consumption'].median()
     df_final['Average-error'] = df_final['Average'] - df_final['Consumption']
     df_final['Average-error%'] = (df_final['Average'] - df_final['Consumption']) / df_final['Consumption']
 
@@ -100,8 +101,24 @@ def quantile_number(quant_number=5, min_est_level = 10000):
     df_sum_month['Precision'] = df_sum_month['TP'] / (df_sum_month['TP'] +  df_sum_month['FP'])
     df_sum_month['Recall'] = df_sum_month['TP'] / (df_sum_month['TP'] + df_sum_month['FN'])
 
-    df_sum_month = df_sum_month.sort_values(by='Month').reset_index()
 
+
+    # estimation
+    df_sum_month['Estimation_%'] = df_sum_month['Month']
+    list_med = []
+    list_mean = []
+    list_20 = []
+    list_80 = []
+    for iii in list_month:
+        list_med.append(df_final.loc[df_final['Month'] == iii, 'Average-error%'].median())
+        list_mean.append(df_final.loc[df_final['Month'] == iii, 'Average-error%'].mean())
+        list_20.append(df_final.loc[df_final['Month'] == iii, 'Average-error%'].quantile(q = 0.2))
+        list_80.append(df_final.loc[df_final['Month'] == iii, 'Average-error%'].quantile(q = 0.8))
+    df_sum_month['Median'] = list_med
+    df_sum_month['Mean'] = list_mean
+    df_sum_month['20_percentile'] = list_20
+    df_sum_month['80_percentile'] = list_80
+    df_sum_month = df_sum_month.sort_values(by='Month').reset_index()
     print(df_sum_month)
     '''
     df_sum_uuid = pd.DataFrame()
