@@ -35,6 +35,7 @@ def quantile_number(quant_number=5):
             df_non_raw['Median'] = df_non_raw[(df_non_raw['Month'] == date_month2) & (df_non_raw['AppId'] == appid2) & (df_non_raw['QuantileId'] == q_ind)]['Consumption']/median
 
 
+
     return df_final, df_non_raw
 
 df_final = quantile_number()
