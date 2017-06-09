@@ -31,10 +31,18 @@ def quantile_number(quant_number=5, min_est_level=10000):
         df_non_raw2 = pd.merge(df_final2[(df_final2['QuantileId'] == id)], df_non_raw, on=['UUID', 'Month'],how='inner')
         df_non_raw2['QuantileId'] = id
         df_non_raw3 = df_non_raw3.append(df_non_raw2, ignore_index=True)
-        
+
+
     df_non_raw3 = df_non_raw3[['index', 'NhoodId', 'UUID', 'AppId', 'Month', 'Consumption', 'QuantileId']]
+
+    df_final['Raw'] = df_final['Consumption']
+
+    df1 = df_final[['UUID','Month', 'Raw']]
+    df2 = df_non_raw3[['UUID', 'Month']]
+    df3 = df2.merge(df1)
+    df_non_raw3['Raw'] = df3['Raw']
     df_final = df_final.append(df_non_raw3, ignore_index=True)
-    
+    print(df_final)
     # calculating Average, Median
     df_final['Average'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('mean')
     df_final['Median'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('median')
