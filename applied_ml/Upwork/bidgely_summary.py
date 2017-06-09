@@ -43,7 +43,7 @@ def quantile_number(quant_number=5, min_est_level=10000):
 	df3 = df2.merge(df1)
 	df_non_raw3['Raw'] = df3['Raw']
 	df_final = df_final.append(df_non_raw3, ignore_index=True)
-	print(df_final)
+
 	
 	# calculating Average, Median
 	df_final['Average'] = df_final.groupby(['NhoodId', 'Month', 'QuantileId', 'AppId'])['Consumption'].transform('mean')
@@ -96,22 +96,22 @@ def quantile_number(quant_number=5, min_est_level=10000):
 	for iii in list_month:
 		# heating
 		list_tp_heating.append(df_final_heating.loc[(df_final_heating.Month == iii) & (
-		df_final_heating.Detection == 'TP'), 'Detection'].count())
+			df_final_heating.Detection == 'TP'), 'Detection'].count())
 		list_tn_heating.append(df_final_heating.loc[(df_final_heating.Month == iii) & (
-		df_final_heating.Detection == 'TN'), 'Detection'].count())
+			df_final_heating.Detection == 'TN'), 'Detection'].count())
 		list_fp_heating.append(df_final_heating.loc[(df_final_heating.Month == iii) & (
-		df_final_heating.Detection == 'FP'), 'Detection'].count())
+			df_final_heating.Detection == 'FP'), 'Detection'].count())
 		list_fn_heating.append(df_final_heating.loc[(df_final_heating.Month == iii) & (
-		df_final_heating.Detection == 'FN'), 'Detection'].count())
+			df_final_heating.Detection == 'FN'), 'Detection'].count())
 		# cooling
 		list_tp_cooling.append(df_final_cooling.loc[(df_final_cooling.Month == iii) & (
-		df_final_cooling.Detection == 'TP'), 'Detection'].count())
+			df_final_cooling.Detection == 'TP'), 'Detection'].count())
 		list_tn_cooling.append(df_final_cooling.loc[(df_final_cooling.Month == iii) & (
-		df_final_cooling.Detection == 'TN'), 'Detection'].count())
+			df_final_cooling.Detection == 'TN'), 'Detection'].count())
 		list_fp_cooling.append(df_final_cooling.loc[(df_final_cooling.Month == iii) & (
-		df_final_cooling.Detection == 'FP'), 'Detection'].count())
+			df_final_cooling.Detection == 'FP'), 'Detection'].count())
 		list_fn_cooling.append(df_final_cooling.loc[(df_final_cooling.Month == iii) & (
-		df_final_cooling.Detection == 'FN'), 'Detection'].count())
+			df_final_cooling.Detection == 'FN'), 'Detection'].count())
 	
 	# heating confusion matrix
 	df_sum_month['TP_heating'] = list_tp_heating
@@ -119,9 +119,9 @@ def quantile_number(quant_number=5, min_est_level=10000):
 	df_sum_month['FP_heating'] = list_fp_heating
 	df_sum_month['FN_heating'] = list_fn_heating
 	df_sum_month['Precision_heating'] = df_sum_month['TP_heating'] / (
-	df_sum_month['TP_heating'] + df_sum_month['FP_heating'])
+		df_sum_month['TP_heating'] + df_sum_month['FP_heating'])
 	df_sum_month['Recall_heating'] = df_sum_month['TP_heating'] / (
-	df_sum_month['TP_heating'] + df_sum_month['FN_heating'])
+		df_sum_month['TP_heating'] + df_sum_month['FN_heating'])
 	
 	# cooling confusion matrix
 	df_sum_month['TP_cooling'] = list_tp_cooling
@@ -129,9 +129,9 @@ def quantile_number(quant_number=5, min_est_level=10000):
 	df_sum_month['FP_cooling'] = list_fp_cooling
 	df_sum_month['FN_cooling'] = list_fn_cooling
 	df_sum_month['Precision_cooling'] = df_sum_month['TP_cooling'] / (
-	df_sum_month['TP_cooling'] + df_sum_month['FP_cooling'])
+		df_sum_month['TP_cooling'] + df_sum_month['FP_cooling'])
 	df_sum_month['Recall_cooling'] = df_sum_month['TP_cooling'] / (
-	df_sum_month['TP_cooling'] + df_sum_month['FN_cooling'])
+		df_sum_month['TP_cooling'] + df_sum_month['FN_cooling'])
 	
 	# estimation% heating
 	df_sum_month['Estimation %'] = df_sum_month['Month']
@@ -238,7 +238,7 @@ def quantile_number(quant_number=5, min_est_level=10000):
 	df_final_heating_UUID = pd.merge(df_final_heating_UUID_median, df_final_heating_UUID_mean, on='Estimation %')
 	df_final_UUID = pd.merge(df_final_heating_UUID, df_final_cooling_UUID, on='Estimation %')
 	
-	df_sum_month = df_sum_month.append(df_final_UUID)
+	# df_sum_month = df_sum_month.append(df_final_UUID)
 	
 	# summary by UUID ( estimate (% of raw))
 	# cooling mean
@@ -271,10 +271,11 @@ def quantile_number(quant_number=5, min_est_level=10000):
 	df_final_heating_UUID2 = pd.merge(df_final_heating_UUID_median2, df_final_heating_UUID_mean2,
 									  on='Estimation (% of raw)')
 	df_final_UUID2 = pd.merge(df_final_heating_UUID2, df_final_cooling_UUID2, on='Estimation (% of raw)')
+
 	
-	# appendin
-	
-	df_sum_month = df_sum_month.append(df_final_UUID2)
+	# appending
+	df_final_UUID = pd.merge(df_final_UUID, df_final_UUID2, left_on='Estimation %', right_on='Estimation (% of raw)')
+	df_sum_month = df_sum_month.append(df_final_UUID)
 	
 	# reordering columns
 	df_sum_month = df_sum_month[['Month', 'TP_heating', 'TN_heating', 'FP_heating', 'FN_heating', 'Precision_heating',
