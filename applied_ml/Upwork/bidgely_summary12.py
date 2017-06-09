@@ -151,8 +151,52 @@ def quantile_number(quant_number=5, min_est_level=10000):
     df_sum_month['Mean_cooling'] = list_mean_cooling
     df_sum_month['20_percentile_cooling'] = list_20_cooling
     df_sum_month['80_percentile_cooling'] = list_80_cooling
+    df_sum_month = df_sum_month.sort_values(by='Month').reset_index()
+    
+    # summary by UUID
+    # cooling mean
+    df_final_cooling_UUID_mean = df_final_cooling.groupby('UUID').mean()
+    df_final_cooling_UUID_mean.reset_index(level=0, inplace=True)
+    df_final_cooling_UUID_mean = df_final_cooling_UUID_mean[['UUID', 'Average-error%']]
+    df_final_cooling_UUID_mean.columns = ['Estimation', 'Mean_cooling']
+    
+    #cooling median
+    df_final_cooling_UUID_median = df_final_cooling.groupby('UUID').median()
+    df_final_cooling_UUID_median.reset_index(level=0, inplace=True)
+    df_final_cooling_UUID_median = df_final_cooling_UUID_median[['UUID', 'Average-error%']]
+    df_final_cooling_UUID_median.columns = ['Estimation', 'Median_cooling']
 
-    df_sum_month['Estimation (% of raw)'] = df_sum_month['Month']
+    # heating mean
+    df_final_heating_UUID_mean = df_final_heating.groupby('UUID').mean()
+    df_final_heating_UUID_mean.reset_index(level=0, inplace=True)
+    df_final_heating_UUID_mean = df_final_heating_UUID_mean[['UUID', 'Average-error%']]
+    df_final_heating_UUID_mean.columns = ['Estimation', 'Mean_heating']
+
+    # heating median
+    df_final_heating_UUID_median = df_final_heating.groupby('UUID').median()
+    df_final_heating_UUID_median.reset_index(level=0, inplace=True)
+    df_final_heating_UUID_median = df_final_heating_UUID_median[['UUID', 'Average-error%']]
+    df_final_heating_UUID_median.columns = ['Estimation', 'Median_heating']
+    
+    # joining mean&median
+    df_final_cooling_UUID = pd.merge(df_final_cooling_UUID_median, df_final_cooling_UUID_mean, on='Estimation')
+    df_final_heating_UUID = pd.merge(df_final_heating_UUID_median, df_final_heating_UUID_mean, on='Estimation')
+    df_final_UUID = pd.merge(df_final_heating_UUID, df_final_cooling_UUID, on='Estimation')
+
+    
+    #appendin
+    df_sum_month = df_sum_month.append(df_final_UUID)
+    
+    # reordering columns
+    #df_sum_month = df_sum_month[['Month', 'TP_heating', 'TN_heating', 'FP_heating', 'FN_heating', 'Precision_heating',
+                                 #'Recall_heating', 'TP_cooling', 'TN_cooling', 'FP_cooling', 'FN_cooling', 'Precision_cooling',
+                                 #'Recall_cooling', 'Estimation', 'Median_heating', 'Mean_heating', '20_percentile_heating', '80_percentile_heating',
+                                 #'Median_cooling', 'Mean_cooling', '20_percentile_cooling', '80_percentile_cooling', 'index'
+                                 #  ]]
+
+    # estimation(% of raw) heating
+    df_sum_month['Estimation(% of raw)'] = df_sum_month['Month']
+
     list_med_heating2 = []
     list_mean_heating2 = []
     list_20_heating2 = []
@@ -176,94 +220,62 @@ def quantile_number(quant_number=5, min_est_level=10000):
     df_sum_month['Median_heating2'] = list_med_heating2
     df_sum_month['Mean_heating2'] = list_mean_heating2
     df_sum_month['20_percentile_heating2'] = list_20_heating2
-    df_sum_month['80_percentile_heating2'] = list_80_heating2
+    df_sum_month['80_percentile_heating'] = list_80_heating2
     # cooling
     df_sum_month['Median_cooling2'] = list_med_cooling2
     df_sum_month['Mean_cooling2'] = list_mean_cooling2
     df_sum_month['20_percentile_cooling2'] = list_20_cooling2
     df_sum_month['80_percentile_cooling2'] = list_80_cooling2
-
     df_sum_month = df_sum_month.sort_values(by='Month').reset_index()
-    
-    # summary by UUID ( estimate %)
-    # cooling mean
-    df_final_cooling_UUID_mean = df_final_cooling.groupby('UUID').mean()
-    df_final_cooling_UUID_mean.reset_index(level=0, inplace=True)
-    df_final_cooling_UUID_mean = df_final_cooling_UUID_mean[['UUID', 'Average-error%']]
-    df_final_cooling_UUID_mean.columns = ['Estimation %', 'Mean_cooling']
-    
-    #cooling median
-    df_final_cooling_UUID_median = df_final_cooling.groupby('UUID').median()
-    df_final_cooling_UUID_median.reset_index(level=0, inplace=True)
-    df_final_cooling_UUID_median = df_final_cooling_UUID_median[['UUID', 'Average-error%']]
-    df_final_cooling_UUID_median.columns = ['Estimation %', 'Median_cooling']
 
-    # heating mean
-    df_final_heating_UUID_mean = df_final_heating.groupby('UUID').mean()
-    df_final_heating_UUID_mean.reset_index(level=0, inplace=True)
-    df_final_heating_UUID_mean = df_final_heating_UUID_mean[['UUID', 'Average-error%']]
-    df_final_heating_UUID_mean.columns = ['Estimation %', 'Mean_heating']
-
-    # heating median
-    df_final_heating_UUID_median = df_final_heating.groupby('UUID').median()
-    df_final_heating_UUID_median.reset_index(level=0, inplace=True)
-    df_final_heating_UUID_median = df_final_heating_UUID_median[['UUID', 'Average-error%']]
-    df_final_heating_UUID_median.columns = ['Estimation %', 'Median_heating']
-    
-    # joining mean&median
-    df_final_cooling_UUID = pd.merge(df_final_cooling_UUID_median, df_final_cooling_UUID_mean, on='Estimation %')
-    df_final_heating_UUID = pd.merge(df_final_heating_UUID_median, df_final_heating_UUID_mean, on='Estimation %')
-    df_final_UUID = pd.merge(df_final_heating_UUID, df_final_cooling_UUID, on='Estimation %')
-
-    df_sum_month = df_sum_month.append(df_final_UUID)
-
-    # summary by UUID ( estimate (% of raw))
+    # summary by UUID
     # cooling mean
     df_final_cooling_UUID_mean2 = df_final_cooling.groupby('UUID').mean()
     df_final_cooling_UUID_mean2.reset_index(level=0, inplace=True)
     df_final_cooling_UUID_mean2 = df_final_cooling_UUID_mean2[['UUID', 'Average-error(% of raw)']]
-    df_final_cooling_UUID_mean2.columns = ['Estimation (% of raw)', 'Mean_cooling2']
+    df_final_cooling_UUID_mean2.columns = ['Estimation(% of raw)', 'Mean_cooling2']
 
     # cooling median
     df_final_cooling_UUID_median2 = df_final_cooling.groupby('UUID').median()
     df_final_cooling_UUID_median2.reset_index(level=0, inplace=True)
     df_final_cooling_UUID_median2 = df_final_cooling_UUID_median2[['UUID', 'Average-error(% of raw)']]
-    df_final_cooling_UUID_median2.columns = ['Estimation (% of raw)', 'Median_cooling2']
+    df_final_cooling_UUID_median2.columns = ['Estimation(% of raw)', 'Median_cooling2']
 
     # heating mean
     df_final_heating_UUID_mean2 = df_final_heating.groupby('UUID').mean()
     df_final_heating_UUID_mean2.reset_index(level=0, inplace=True)
     df_final_heating_UUID_mean2 = df_final_heating_UUID_mean2[['UUID', 'Average-error(% of raw)']]
-    df_final_heating_UUID_mean2.columns = ['Estimation (% of raw)', 'Mean_heating2']
+    df_final_heating_UUID_mean2.columns = ['Estimation(% of raw)', 'Mean_heating2']
 
     # heating median
     df_final_heating_UUID_median2 = df_final_heating.groupby('UUID').median()
     df_final_heating_UUID_median2.reset_index(level=0, inplace=True)
     df_final_heating_UUID_median2 = df_final_heating_UUID_median2[['UUID', 'Average-error(% of raw)']]
-    df_final_heating_UUID_median2.columns = ['Estimation (% of raw)', 'Median_heating2']
+    df_final_heating_UUID_median2.columns = ['Estimation(% of raw)', 'Median_heating2']
 
     # joining mean&median
-    df_final_cooling_UUID2 = pd.merge(df_final_cooling_UUID_median2, df_final_cooling_UUID_mean2, on='Estimation (% of raw)')
-    df_final_heating_UUID2 = pd.merge(df_final_heating_UUID_median2, df_final_heating_UUID_mean2, on='Estimation (% of raw)')
-    df_final_UUID2 = pd.merge(df_final_heating_UUID2, df_final_cooling_UUID2, on='Estimation (% of raw)')
+    df_final_cooling_UUID2 = pd.merge(df_final_cooling_UUID_median2, df_final_cooling_UUID_mean2, on='Estimation(% of raw)')
+    df_final_heating_UUID2 = pd.merge(df_final_heating_UUID_median2, df_final_heating_UUID_mean2, on='Estimation(% of raw)')
+    df_final_UUID2 = pd.merge(df_final_heating_UUID2, df_final_cooling_UUID2, on='Estimation(% of raw)')
 
-    #appendin
-
+    # appendin
     df_sum_month = df_sum_month.append(df_final_UUID2)
 
     # reordering columns
     df_sum_month = df_sum_month[['Month', 'TP_heating', 'TN_heating', 'FP_heating', 'FN_heating', 'Precision_heating',
-                                 'Recall_heating', 'TP_cooling', 'TN_cooling', 'FP_cooling', 'FN_cooling', 'Precision_cooling',
-                                 'Recall_cooling', 'Estimation %', 'Median_heating', 'Mean_heating', '20_percentile_heating', '80_percentile_heating',
-                                 'Median_cooling', 'Mean_cooling', '20_percentile_cooling', '80_percentile_cooling', 'Estimation (% of raw)', 'Median_heating2', 'Mean_heating2', '20_percentile_heating2', '80_percentile_heating2',
-                                 'Median_cooling2', 'Mean_cooling2', '20_percentile_cooling2', '80_percentile_cooling2','index'
+                                 'Recall_heating', 'TP_cooling', 'TN_cooling', 'FP_cooling', 'FN_cooling',
+                                 'Precision_cooling',
+                                 'Recall_cooling', 'Estimation', 'Median_heating', 'Mean_heating',
+                                 '20_percentile_heating', '80_percentile_heating',
+                                 'Median_cooling', 'Mean_cooling', '20_percentile_cooling', '80_percentile_cooling','Estimation(% of raw)', 'Median_heating2', 'Mean_heating2',
+                                 '20_percentile_heating2', '80_percentile_heating2',
+                                 'Median_cooling2', 'Mean_cooling2', '20_percentile_cooling2', '80_percentile_cooling2',
+                                 'index'
                                  ]]
-
-
     # print(df_final_cooling_UUID_mean.shape, df_final_cooling_UUID_median.shape)
     # print(df_final_cooling_UUID)
     df_sum_month.to_csv('test.csv')
-
+    
 
     '''
     df_sum_uuid = pd.DataFrame()
