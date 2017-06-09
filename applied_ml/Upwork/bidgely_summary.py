@@ -156,12 +156,27 @@ def quantile_number(quant_number=5, min_est_level=10000):
     df_final_cooling_UUID_median.reset_index(level=0, inplace=True)
     df_final_cooling_UUID_median = df_final_cooling_UUID_median[['UUID', 'Average-error%']]
     df_final_cooling_UUID_median.columns = ['Estimation', 'Median_cooling']
+
+    # heating mean
+    df_final_heating_UUID_mean = df_final_heating.groupby('UUID').mean()
+    df_final_heating_UUID_mean.reset_index(level=0, inplace=True)
+    df_final_heating_UUID_mean = df_final_heating_UUID_mean[['UUID', 'Average-error%']]
+    df_final_heating_UUID_mean.columns = ['Estimation', 'Mean_heating']
+
+    # heating median
+    df_final_heating_UUID_median = df_final_heating.groupby('UUID').median()
+    df_final_heating_UUID_median.reset_index(level=0, inplace=True)
+    df_final_heating_UUID_median = df_final_heating_UUID_median[['UUID', 'Average-error%']]
+    df_final_heating_UUID_median.columns = ['Estimation', 'Median_heating']
     
-    # joining cooling mean&median
+    # joining mean&median
     df_final_cooling_UUID = pd.merge(df_final_cooling_UUID_median, df_final_cooling_UUID_mean, on='Estimation')
+    df_final_heating_UUID = pd.merge(df_final_heating_UUID_median, df_final_heating_UUID_mean, on='Estimation')
+    df_final_UUID = pd.merge(df_final_heating_UUID, df_final_cooling_UUID, on='Estimation')
+
     
     #appendin
-    df_sum_month = df_sum_month.append(df_final_cooling_UUID)
+    df_sum_month = df_sum_month.append(df_final_UUID)
     
     # reordering columns
     df_sum_month = df_sum_month[['Month', 'TP_heating', 'TN_heating', 'FP_heating', 'FN_heating', 'Precision_heating',
