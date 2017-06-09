@@ -143,7 +143,37 @@ def quantile_number(quant_number=5, min_est_level=10000):
     df_sum_month['20_percentile_cooling'] = list_20_cooling
     df_sum_month['80_percentile_cooling'] = list_80_cooling
     df_sum_month = df_sum_month.sort_values(by='Month').reset_index()
-    print(df_sum_month)
+    
+    # summary by UUID
+    # cooling mean
+    df_final_cooling_UUID_mean = df_final_cooling.groupby('UUID').mean()
+    df_final_cooling_UUID_mean.reset_index(level=0, inplace=True)
+    df_final_cooling_UUID_mean = df_final_cooling_UUID_mean[['UUID', 'Average-error%']]
+    df_final_cooling_UUID_mean.columns = ['Estimation', 'Mean_cooling']
+    
+    #cooling median
+    df_final_cooling_UUID_median = df_final_cooling.groupby('UUID').median()
+    df_final_cooling_UUID_median.reset_index(level=0, inplace=True)
+    df_final_cooling_UUID_median = df_final_cooling_UUID_median[['UUID', 'Average-error%']]
+    df_final_cooling_UUID_median.columns = ['Estimation', 'Median_cooling']
+    
+    # joining cooling mean&median
+    df_final_cooling_UUID = pd.merge(df_final_cooling_UUID_median, df_final_cooling_UUID_mean, on='Estimation')
+    
+    #appendin
+    df_sum_month = df_sum_month.append(df_final_cooling_UUID)
+    
+    # reordering columns
+    df_sum_month = df_sum_month[['Month', 'TP_heating', 'TN_heating', 'FP_heating', 'FN_heating', 'Precision_heating',
+                                 'Recall_heating', 'TP_cooling', 'TN_cooling', 'FP_cooling', 'FN_cooling', 'Precision_cooling',
+                                 'Recall_cooling', 'Estimation', 'Median_heating', 'Mean_heating', '20_percentile_heating', '80_percentile_heating',
+                                 'Median_cooling', 'Mean_cooling', '20_percentile_cooling', '80_percentile_cooling', 'index'
+                                 ]]
+    # print(df_final_cooling_UUID_mean.shape, df_final_cooling_UUID_median.shape)
+    # print(df_final_cooling_UUID)
+    df_sum_month.to_csv('test.csv')
+    
+
     '''
     df_sum_uuid = pd.DataFrame()
     list_uuid = list(df_final['UUID'].unique())
