@@ -175,7 +175,7 @@ def quantile_number(quant_number=5, min_est_level=10000):
     df_final_UUID = pd.merge(df_final_heating_UUID, df_final_cooling_UUID, on='Estimation')
 
     
-    #appendin
+    #appending
     df_sum_month = df_sum_month.append(df_final_UUID)
     
     # reordering columns
