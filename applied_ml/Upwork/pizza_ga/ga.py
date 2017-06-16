@@ -22,9 +22,9 @@ for name in common_name:
 
 all_users['bounce_rate'] = all_users['bounce_rate'].str.replace('%','').astype(float)
 
-all_users.fillna(0, axis = 1, inplace=True)
+
 all_users['sess_duration'] = pd.to_timedelta(all_users['sess_duration']).dt.total_seconds()
 all_users.loc[(all_users['single_session_users'] == 0) & (all_users['returning_users'] == 1), 'label'] = 1
-
-# all_users.to_csv('pizza_all_users.csv')
+all_users.fillna(0, axis = 1, inplace=True)
+all_users.to_csv('pizza_all_users.csv')
 print(all_users)
