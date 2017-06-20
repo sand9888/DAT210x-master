@@ -7,6 +7,7 @@ all_users2 = pd.read_csv(all_users2_data, names = ['id', 'sessions', 'sess_durat
 all_users = all_users1.append(all_users2)
 
 
+
 # all_users = pd.read_csv('dataframe_main.csv')
 
 common_name = ['returning_users', 'search_traffic', 'single_session_users', 'source_Google', 'source_MAILRU',
